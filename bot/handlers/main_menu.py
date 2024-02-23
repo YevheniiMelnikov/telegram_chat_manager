@@ -26,6 +26,12 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
             text=translate(MessageText.choose_language), reply_markup=language_choice()
         )
         await state.set_state(States.language_choice)
+        
+        
+@start_router.message(Command("language"))
+async def cmd_language(message: Message, state: FSMContext) -> None:
+    await message.answer(text=translate(MessageText.choose_language), reply_markup=language_choice())
+    await state.set_state(States.language_choice)
 
 
 @start_router.message(States.language_choice)

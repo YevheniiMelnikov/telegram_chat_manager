@@ -23,7 +23,7 @@ async def get_events() -> list[Event]:
     if events:
         return events
 
-    sheets_manager = GoogleSheetsManager(SPREADSHEET_ID, GOOGLE_CREDENTIALS_FILE)
+    sheets_manager = GoogleSheetsManager(SPREADSHEET_ID, GOOGLE_CREDENTIALS_FILE, storage)
     events = await sheets_manager.get_events()
     await storage.update_events(events)
     return events
