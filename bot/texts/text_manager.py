@@ -61,8 +61,8 @@ class TextManager:
             for key, value in data.items():
                 result[f"{type}.{key}"] = value
         return result
-  
-    
+
+
 resource_manager = TextManager()
 
 

@@ -30,9 +30,7 @@ async def get_events() -> list[Event]:
 
 
 async def manage_google_sheets() -> None:
-    sheets_manager = GoogleSheetsManager(
-        os.getenv("SPREADSHEET_ID"), GOOGLE_CREDENTIALS_FILE, storage
-    )
+    sheets_manager = GoogleSheetsManager(os.getenv("SPREADSHEET_ID"), GOOGLE_CREDENTIALS_FILE, storage)
     updater_task = asyncio.create_task(sheets_manager.run())
     await updater_task
 
@@ -41,9 +39,7 @@ async def get_person_by_id(user_id: int) -> Type[Person] | None:
     return await storage.get_person_by_id(user_id)
 
 
-async def add_user_to_db(
-    user_id: int, lang: str, name: str | None = None, phone: str | None = None
-) -> None:
+async def add_user_to_db(user_id: int, lang: str, name: str | None = None, phone: str | None = None) -> None:
     await storage.add_person(user_id, lang, name, phone)
 
 
@@ -57,11 +53,7 @@ async def show_all_events(message: Message, state: FSMContext, person: Person) -
         parse_mode="HTML",
     )
     for ev in await get_events():
-        price_text = (
-            ev.price
-            if ev.price is not None
-            else translate(MessageText.no_fixed_price, lang=person.language)
-        )
+        price_text = ev.price if ev.price is not None else translate(MessageText.no_fixed_price, lang=person.language)
         event_data = translate(MessageText.event_data, lang=person.language).format(
             name=ev.name, date=ev.date, time=ev.time, price=price_text
         )
@@ -93,4 +85,3 @@ async def resend_receipt(message: Message, state: FSMContext) -> None:
         )
     await state.update_data(message=message)
     await state.set_state(States.sign_up_request)
-

@@ -22,12 +22,10 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
             reply_markup=main_menu_keyboard(person.language),
         )
     else:
-        await message.answer(
-            text=translate(MessageText.choose_language), reply_markup=language_choice()
-        )
+        await message.answer(text=translate(MessageText.choose_language), reply_markup=language_choice())
         await state.set_state(States.language_choice)
-        
-        
+
+
 @start_router.message(Command("language"))
 async def cmd_language(message: Message, state: FSMContext) -> None:
     await message.answer(text=translate(MessageText.choose_language), reply_markup=language_choice())
@@ -51,9 +49,7 @@ async def create_user(message: Message, state: FSMContext) -> None:
             reply_markup=main_menu_keyboard(lang_code),
         )
     else:
-        await message.answer(
-            text=translate(MessageText.choose_language), reply_markup=language_choice()
-        )
+        await message.answer(text=translate(MessageText.choose_language), reply_markup=language_choice())
 
 
 @start_router.callback_query(States.main_menu)
@@ -73,4 +69,3 @@ async def main_menu(callback: CallbackQuery, state: FSMContext) -> None:
 async def message_in_main_menu(message: Message, state: FSMContext) -> None:
     await message.delete()
     await state.set_state(States.main_menu)
-    

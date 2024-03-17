@@ -1,7 +1,6 @@
 import os
 
-from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           KeyboardButton, ReplyKeyboardMarkup)
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 from bot.models import Event
@@ -48,9 +47,7 @@ def request_contact(lang_code: str) -> ReplyKeyboardMarkup:
 def payment_choice(lang_code: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=translate(ButtonText.pay_50, lang=lang_code), callback_data="pay_50")
-    kb.button(
-        text=translate(ButtonText.pay_100, lang=lang_code), callback_data="pay_100"
-    )
+    kb.button(text=translate(ButtonText.pay_100, lang=lang_code), callback_data="pay_100")
     return kb.as_markup(resize_keyboard=True, one_time_keyboard=True)
 
 

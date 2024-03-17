@@ -1,4 +1,3 @@
-import os
 from typing import Any, List, Type
 
 from sqlalchemy import create_engine
@@ -29,9 +28,7 @@ class Storage:
         phone: str | None = None,
     ) -> None:
         try:
-            person = Person(
-                id=telegram_id, language=language_code, name=name, phone=phone
-            )
+            person = Person(id=telegram_id, language=language_code, name=name, phone=phone)
             self.session.add(person)
             self.session.commit()
         except IntegrityError:
@@ -49,9 +46,7 @@ class Storage:
             return False
         except IntegrityError:
             self.session.rollback()
-            logger.warning(
-                f"IntegrityError occurred while editing person with id={person_id}"
-            )
+            logger.warning(f"IntegrityError occurred while editing person with id={person_id}")
             return False
 
     async def get_person_by_id(self, person_id: int) -> Type[Person] | None:
