@@ -1,10 +1,11 @@
+import os
+
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            KeyboardButton, ReplyKeyboardMarkup)
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 from bot.models import Event
 from bot.texts.text_manager import ButtonText, translate
-from settings import OWNER_LINK
 
 
 def language_choice() -> ReplyKeyboardMarkup:
@@ -64,7 +65,7 @@ def main_menu_keyboard(lang_code: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(
         text=translate(ButtonText.text_me, lang=lang_code),
-        url=OWNER_LINK,
+        url=os.getenv("OWNER_LINK"),
         callback_data="text_me",
     )
     kb.button(

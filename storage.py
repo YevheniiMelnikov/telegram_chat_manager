@@ -1,3 +1,4 @@
+import os
 from typing import Any, List, Type
 
 from sqlalchemy import create_engine
@@ -6,13 +7,14 @@ from sqlalchemy.orm import make_transient, sessionmaker
 
 from bot.models import Base, Event, Person
 from logger import logger
+from settings import DB_NAME
 from utils import singleton
 
 
 @singleton
 class Storage:
-    def __init__(self, db_name: str):
-        self.engine = create_engine(db_name)
+    def __init__(self):
+        self.engine = create_engine(url=DB_NAME)
         self.session = sessionmaker(bind=self.engine)()
         try:
             Base.metadata.create_all(self.engine)

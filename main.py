@@ -1,15 +1,17 @@
 import asyncio
+import os
 
 from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
 
 from bot.handlers import main_menu, registration
 from functions import manage_google_sheets
 from logger import logger
-from settings import BOT_TOKEN
 
 
 async def main():
-    bot = Bot(token=BOT_TOKEN)  # TODO: HIDE SENSITIVE DATA
+    load_dotenv()
+    bot = Bot(token=os.getenv("BOT_TOKEN"))
     dp = Dispatcher()
     dp.include_router(main_menu.start_router)
     dp.include_router(registration.registration_router)

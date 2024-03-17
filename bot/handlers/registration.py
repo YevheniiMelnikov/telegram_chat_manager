@@ -1,3 +1,5 @@
+import os
+
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
@@ -8,7 +10,7 @@ from bot.states import States
 from bot.texts.text_manager import MessageText, translate
 from functions import edit_person, get_events, get_person_by_id, resend_receipt
 from logger import logger
-from settings import BANK_CARD, MIN_PRICE
+from settings import MIN_PRICE
 
 registration_router = Router()
 
@@ -97,7 +99,7 @@ async def calculate_amount(callback: CallbackQuery, state: FSMContext):
                 logger.info(f"User {person.id} ready to pay {amount} UAH for {chosen_event.name}")
                 await callback.message.answer(
                     translate(MessageText.make_payment, lang=person.language).format(
-                        amount=amount, card=BANK_CARD
+                        amount=amount, card=os.getenv("BANK_CARD")
                     )
                 )
                 await state.update_data(

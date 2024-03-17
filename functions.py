@@ -1,4 +1,5 @@
 import asyncio
+import os
 from typing import Type
 
 import aiohttp
@@ -9,13 +10,12 @@ from aiogram.types import Message
 from bot.keyboards.keyboards import approve_payment, event_choice
 from bot.models import Event, Person
 from bot.states import States
-from bot.texts.text_manager import MessageText, ResourceType, TextManager, translate
-from settings import (BOT_TOKEN, DB_NAME, GOOGLE_CREDENTIALS_FILE, OWNER_TG_ID,
-                      SPREADSHEET_ID)
+from bot.texts.text_manager import MessageText, translate
+from settings import GOOGLE_CREDENTIALS_FILE
 from sheets.sheets_manager import GoogleSheetsManager
 from storage import Storage
 
-storage = Storage(DB_NAME)
+storage = Storage()
 
 
 async def get_events() -> list[Event]:
@@ -23,7 +23,7 @@ async def get_events() -> list[Event]:
     if events:
         return events
 
-    sheets_manager = GoogleSheetsManager(SPREADSHEET_ID, GOOGLE_CREDENTIALS_FILE, storage)
+    sheets_manager = GoogleSheetsManager(os.getenv("SPREADSHEET_ID"), GOOGLE_CREDENTIALS_FILE, storage)
     events = await sheets_manager.get_events()
     await storage.update_events(events)
     return events
@@ -31,7 +31,7 @@ async def get_events() -> list[Event]:
 
 async def manage_google_sheets() -> None:
     sheets_manager = GoogleSheetsManager(
-        SPREADSHEET_ID, GOOGLE_CREDENTIALS_FILE, storage
+        os.getenv("SPREADSHEET_ID"), GOOGLE_CREDENTIALS_FILE, storage
     )
     updater_task = asyncio.create_task(sheets_manager.run())
     await updater_task
@@ -76,10 +76,10 @@ async def show_all_events(message: Message, state: FSMContext, person: Person) -
 async def resend_receipt(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     person = await get_person_by_id(message.from_user.id)
-    bot = Bot(BOT_TOKEN)
+    bot = Bot(os.environ.get("BOT_TOKEN"))
     async with aiohttp.ClientSession():
         await bot.send_photo(
-            chat_id=OWNER_TG_ID,
+            chat_id=os.getenv("OWNER_TG_ID"),
             photo=message.photo[-1].file_id,
             caption=translate(MessageText.approve_payment).format(
                 name=person.name,
