@@ -13,6 +13,7 @@ from utils import singleton
 @singleton
 class Storage:
     def __init__(self):
+        self.active_timers = set()
         self.engine = create_engine(url=DB_NAME)
         self.session = sessionmaker(bind=self.engine)()
         try:

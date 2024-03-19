@@ -21,8 +21,9 @@ class MessageText(Enum):
     choose_language = auto()
     user_created = auto()
     choose_payment_type = auto()
+    are_you_here = auto()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"messages.{self.name}"
 
 
@@ -35,7 +36,7 @@ class ButtonText(Enum):
     pay_50 = auto()
     pay_100 = auto()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"buttons.{self.name}"
 
 

@@ -6,6 +6,7 @@ import aiohttp
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from dotenv import load_dotenv
 
 from bot.keyboards.keyboards import approve_payment, event_choice
 from bot.models import Event, Person
@@ -15,7 +16,9 @@ from settings import GOOGLE_CREDENTIALS_FILE
 from sheets.sheets_manager import GoogleSheetsManager
 from storage import Storage
 
+load_dotenv()
 storage = Storage()
+bot = Bot(os.environ.get("BOT_TOKEN"))
 
 
 async def get_events() -> list[Event]:
@@ -55,7 +58,7 @@ async def show_all_events(message: Message, state: FSMContext, person: Person) -
     for ev in await get_events():
         price_text = ev.price if ev.price is not None else translate(MessageText.no_fixed_price, lang=person.language)
         event_data = translate(MessageText.event_data, lang=person.language).format(
-            name=ev.name, date=ev.date, time=ev.time, price=price_text
+            name=ev.name, date=ev.date, time=ev.time, address=ev.address, price=price_text
         )
         await message.answer(
             text=event_data,
@@ -68,7 +71,6 @@ async def show_all_events(message: Message, state: FSMContext, person: Person) -
 async def resend_receipt(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     person = await get_person_by_id(message.from_user.id)
-    bot = Bot(os.environ.get("BOT_TOKEN"))
     async with aiohttp.ClientSession():
         await bot.send_photo(
             chat_id=os.getenv("OWNER_TG_ID"),
@@ -85,3 +87,18 @@ async def resend_receipt(message: Message, state: FSMContext) -> None:
         )
     await state.update_data(message=message)
     await state.set_state(States.sign_up_request)
+
+
+async def wait_for_user_activity(user_id: int) -> None:
+    await asyncio.sleep(5 * 60)
+    if user_id in storage.active_timers:
+        await bot.send_message(user_id, translate(MessageText.are_you_here))
+
+
+async def start_timer(user_id: int) -> None:
+    storage.active_timers.add(user_id)
+    await asyncio.create_task(wait_for_user_activity(user_id))
+
+
+async def stop_timer(user_id: int) -> None:
+    storage.active_timers.discard(user_id)

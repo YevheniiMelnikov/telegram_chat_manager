@@ -42,22 +42,34 @@ class GoogleSheetsManager:
 
     async def get_events(self) -> list[Event]:
         await self.get_spreadsheet()
+
+        name_list, date_list, time_list, address_list, price_list, description_list = await asyncio.gather(
+            self.get_name_list(),
+            self.get_date_list(),
+            self.get_time_list(),
+            self.get_address_list(),
+            self.get_price_list(),
+            self.get_description_list(),
+        )
+
         return [
             Event(
                 id=id_,
                 name=name,
                 date=date,
                 time=time,
+                address=address,
                 price=price,
                 description=description,
             )
-            for id_, name, date, time, price, description in zip(
-                range(1, len(await self.get_name_list()) + 1),
-                await self.get_name_list(),
-                await self.get_date_list(),
-                await self.get_time_list(),
-                await self.get_price_list(),
-                await self.get_description_list(),
+            for id_, name, date, time, address, price, description in zip(
+                range(1, len(name_list) + 1),
+                name_list,
+                date_list,
+                time_list,
+                address_list,
+                price_list,
+                description_list,
             )
         ]
 
@@ -79,6 +91,10 @@ class GoogleSheetsManager:
 
     async def get_description_list(self) -> list[str]:
         cells = await self.spreadsheet.get("F2:F")
+        return [cell for row in cells for cell in row]
+
+    async def get_address_list(self) -> list[str]:
+        cells = await self.spreadsheet.get("G2:G")
         return [cell for row in cells for cell in row]
 
     async def run(self) -> None:

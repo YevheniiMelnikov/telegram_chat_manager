@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from aiogram import Router
@@ -7,7 +8,7 @@ from aiogram.types import CallbackQuery, Message
 from bot.keyboards.keyboards import main_menu_keyboard, payment_choice, request_contact
 from bot.states import States
 from bot.texts.text_manager import MessageText, translate
-from functions import edit_person, get_events, get_person_by_id, resend_receipt
+from functions import edit_person, get_events, get_person_by_id, resend_receipt, stop_timer
 from logger import logger
 from settings import MIN_PRICE
 
@@ -109,6 +110,7 @@ async def receipt_request(message: Message, state: FSMContext) -> None:
     person = await get_person_by_id(message.from_user.id)
     if message.photo:
         logger.info(f"User {person.id} sent an image")
+        await asyncio.create_task(stop_timer(person.id))
         await message.answer(translate(MessageText.successful_registration, lang=person.language))
         await resend_receipt(message, state)
     else:

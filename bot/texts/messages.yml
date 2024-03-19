@@ -29,9 +29,9 @@ choose_event:
   ua: "Виберіть захід із представлених нижче 👇"
 
 event_data:
-  eng: "<b>Name:</b> {name}\n<b>Date:</b> {date}\n<b>Time:</b> {time}\n<b>Address:</b> Sichovykh Striltsiv, 11\n<b>Price:</b> {price}"
-  ru: "<b>Название:</b> {name}\n<b>Дата:</b> {date}\n<b>Время:</b> {time}\n<b>Адрес:</b> Сечевых стрельцов, 11\n<b>Стоимость:</b> {price}"
-  ua: "<b>Назва:</b> {name}\n<b>Дата:</b> {date}\n<b>Час:</b> {time}\n<b>Адреса:</b> Січових стрільців, 11\n<b>Ціна:</b> {price}"
+  eng: "<b>Name:</b> {name}\n<b>Date:</b> {date}\n<b>Time:</b> {time}\n<b>Address:</b> {address}\n<b>Price:</b> {price}"
+  ru: "<b>Название:</b> {name}\n<b>Дата:</b> {date}\n<b>Время:</b> {time}\n<b>Адрес:</b> {address}\n<b>Стоимость:</b> {price}"
+  ua: "<b>Назва:</b> {name}\n<b>Дата:</b> {date}\n<b>Час:</b> {time}\n<b>Адреса:</b> {address}\n<b>Ціна:</b> {price}"
 
 choose_language:
   eng: "Welcome! Choose a language 👇"
@@ -70,3 +70,8 @@ sign_up_rejected:
   eng: "Your application is rejected 😔"
   ru: "Ваша заявка отклонена 😔"
   ua: "Вашу заявку відхилено 😔"
+
+are_you_here:
+  eng: "Your registration is not complete. Would you like to continue?"
+  ru: "Ваша регистрация не завершена. Желаете продолжить?"
+  ua: "Ваша реєстрація не завершена. Бажаєте продовжити?"

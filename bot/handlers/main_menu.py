@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -6,7 +8,7 @@ from aiogram.types import CallbackQuery, Message
 from bot.keyboards.keyboards import language_choice, main_menu_keyboard
 from bot.states import States
 from bot.texts.text_manager import MessageText, translate
-from functions import add_user_to_db, edit_person, get_person_by_id, show_all_events
+from functions import add_user_to_db, edit_person, get_person_by_id, show_all_events, start_timer
 
 start_router = Router()
 
@@ -59,6 +61,7 @@ async def main_menu(callback: CallbackQuery, state: FSMContext) -> None:
         if person:
             await show_all_events(callback.message, state, person)
             await state.set_state(States.event_choice)
+            await asyncio.create_task(start_timer(person.id))
         else:
             await state.set_state(States.main_menu)
     else:

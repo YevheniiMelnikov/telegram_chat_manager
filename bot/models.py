@@ -11,11 +11,12 @@ class Event(Base):
     name = Column(String)
     date = Column(String)
     time = Column(String)
+    address = Column(String)
     price = Column(String)
     description = Column(String)
 
     def __repr__(self):
-        return f"Event(id={self.id}, name={self.name}, date={self.date}, time={self.time}, price={self.price})"
+        return f"Event(id={self.id}, name={self.name}, date={self.date}, time={self.time}, address={self.address}, price={self.price})"
 
 
 class Person(Base):

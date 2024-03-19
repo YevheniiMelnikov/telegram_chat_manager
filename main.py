@@ -10,8 +10,8 @@ from logger import logger
 
 
 async def main():
-    load_dotenv()
     bot = Bot(token=os.getenv("BOT_TOKEN"))
+    load_dotenv()
     dp = Dispatcher()
     dp.include_router(main_menu.start_router)
     dp.include_router(registration.registration_router)
