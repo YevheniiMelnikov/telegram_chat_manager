@@ -5,7 +5,7 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from bot.keyboards.keyboards import main_menu_keyboard, payment_choice, request_contact
+from bot.keyboards.keyboards import main_menu_keyboard, payment_choice
 from bot.states import States
 from bot.texts.text_manager import MessageText, translate
 from functions import edit_person, get_events, get_person_by_id, resend_receipt, stop_timer
@@ -23,10 +23,7 @@ async def set_chosen_event(callback: CallbackQuery, state: FSMContext) -> None:
         await callback.message.answer(translate(MessageText.enter_name, lang=person.language))
         await state.set_state(States.enter_name)
     elif person.phone is None:
-        await callback.message.answer(
-            translate(MessageText.share_contact, lang=person.language),
-            reply_markup=request_contact(person.language),
-        )
+        await callback.message.answer(translate(MessageText.share_contact, lang=person.language))
         await state.set_state(States.enter_phone)
     else:
         await callback.message.answer(
@@ -42,21 +39,13 @@ async def set_user_name(message: Message, state: FSMContext) -> None:
     await edit_person(person.id, {"name": message.text})
     await state.update_data(person=person)
     await state.set_state(States.enter_phone)
-    await message.answer(
-        translate(MessageText.share_contact, lang=person.language),
-        reply_markup=request_contact(person.language),
-    )
+    await message.answer(translate(MessageText.share_contact, lang=person.language))
 
 
 @registration_router.message(States.enter_phone)
 async def set_user_phone(message: Message, state: FSMContext) -> None:
     person = await get_person_by_id(message.from_user.id)
-    if not message.contact:
-        await message.delete()
-        await state.set_state(States.enter_phone)
-        return
-
-    await edit_person(person.id, {"phone": message.contact.phone_number})
+    await edit_person(person.id, {"phone": message.text})
     await state.update_data(person=person)
     await message.answer(translate(MessageText.user_created, lang=person.language))
     await message.answer(
@@ -112,6 +101,7 @@ async def receipt_request(message: Message, state: FSMContext) -> None:
         logger.info(f"User {person.id} sent an image")
         await asyncio.create_task(stop_timer(person.id))
         await message.answer(translate(MessageText.successful_registration, lang=person.language))
+        await state.set_state(States.sign_up_request)
         await resend_receipt(message, state)
     else:
         await message.answer(translate(MessageText.wrong_format, lang=person.language))

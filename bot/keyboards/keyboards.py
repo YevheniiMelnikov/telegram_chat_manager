@@ -30,20 +30,6 @@ def event_choice(event: Event, lang_code: str) -> InlineKeyboardMarkup:
     return builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
 
 
-def request_contact(lang_code: str) -> ReplyKeyboardMarkup:
-    share_contact_button = [
-        KeyboardButton(
-            text=translate(ButtonText.share_contact, lang=lang_code),
-            request_contact=True,
-        )
-    ]
-    return ReplyKeyboardMarkup(
-        keyboard=[share_contact_button],
-        resize_keyboard=True,
-        one_time_keyboard=True,
-    )
-
-
 def payment_choice(lang_code: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=translate(ButtonText.pay_50, lang=lang_code), callback_data="pay_50")

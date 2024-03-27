@@ -86,13 +86,13 @@ async def resend_receipt(message: Message, state: FSMContext) -> None:
             parse_mode="HTML",
         )
     await state.update_data(message=message)
-    await state.set_state(States.sign_up_request)
 
 
 async def wait_for_user_activity(user_id: int) -> None:
     await asyncio.sleep(5 * 60)
     if user_id in storage.active_timers:
         await bot.send_message(user_id, translate(MessageText.are_you_here))
+        await stop_timer(user_id)
 
 
 async def start_timer(user_id: int) -> None:
