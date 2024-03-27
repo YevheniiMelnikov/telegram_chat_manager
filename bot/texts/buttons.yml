@@ -32,3 +32,8 @@ info:
   eng: "Description ℹ️"
   ru: "Описание ℹ️"
   ua: "Опис ℹ️"
+
+ok:
+  eng: "OK ✔️"
+  ru: "ОК ✔️"
+  ua: "ОК ✔️"

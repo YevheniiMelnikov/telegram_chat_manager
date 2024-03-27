@@ -1,16 +1,14 @@
 import asyncio
 
-from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from bot.handlers.routers import start_router
 from bot.keyboards.keyboards import language_choice, main_menu_keyboard
 from bot.states import States
 from bot.texts.text_manager import MessageText, translate
 from functions import add_user_to_db, edit_person, get_person_by_id, show_all_events, start_timer
-
-start_router = Router()
 
 
 @start_router.message(Command("start"))

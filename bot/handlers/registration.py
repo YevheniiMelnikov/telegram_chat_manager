@@ -5,14 +5,13 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from bot.keyboards.keyboards import main_menu_keyboard, payment_choice
+from bot.handlers.routers import registration_router
+from bot.keyboards.keyboards import payment_choice, image_sent, main_menu_keyboard
 from bot.states import States
 from bot.texts.text_manager import MessageText, translate
 from functions import edit_person, get_events, get_person_by_id, resend_receipt, stop_timer
 from logger import logger
 from settings import MIN_PRICE
-
-registration_router = Router()
 
 
 @registration_router.callback_query(States.event_choice)
@@ -99,33 +98,22 @@ async def receipt_request(message: Message, state: FSMContext) -> None:
     person = await get_person_by_id(message.from_user.id)
     if message.photo:
         logger.info(f"User {person.id} sent an image")
+        await state.set_state(States.wait_for_approve)
+        await message.answer(translate(MessageText.successful_registration, lang=person.language), reply_markup=image_sent())
         await asyncio.create_task(stop_timer(person.id))
-        await message.answer(translate(MessageText.successful_registration, lang=person.language))
-        await state.set_state(States.sign_up_request)
-        await resend_receipt(message, state)
+        await asyncio.create_task(resend_receipt(message, state))
     else:
         await message.answer(translate(MessageText.wrong_format, lang=person.language))
         await message.delete()
         await state.set_state(States.receipt_request)
 
 
-@registration_router.callback_query(States.sign_up_request)
-async def sign_up_request(callback: CallbackQuery, state: FSMContext) -> None:
-    state_data = await state.get_data()
-    message = state_data.get("message")
+@registration_router.message(States.wait_for_approve)
+async def wait_for_approve(message: Message, state: FSMContext) -> None:
     person = await get_person_by_id(message.from_user.id)
-    match callback.data:
-        case "approve":
-            await message.answer(translate(MessageText.sign_up_approved, lang=person.language))
-            logger.info(f"{person.id} approved for event")
-        case "decline":
-            await message.answer(translate(MessageText.sign_up_rejected, lang=person.language))
-            logger.info(f"{person.id} declined for event")
     await state.set_state(States.main_menu)
-    await message.answer(
-        text=translate(MessageText.start, lang=person.language),
-        reply_markup=main_menu_keyboard(person.language),
-    )
+    await message.answer(translate(MessageText.start, lang=person.language), reply_markup=main_menu_keyboard(person.language))
+    await message.delete()
 
 
 @registration_router.message(States.event_choice)

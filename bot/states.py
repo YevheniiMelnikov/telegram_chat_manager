@@ -10,3 +10,4 @@ class States(StatesGroup):
     receipt_request = State()
     sign_up_request = State()
     main_menu = State()
+    wait_for_approve = State()

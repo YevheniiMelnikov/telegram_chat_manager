@@ -56,3 +56,9 @@ def main_menu_keyboard(lang_code: str) -> InlineKeyboardMarkup:
         callback_data="show_events",
     )
     return kb.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def image_sent() -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardBuilder()
+    kb.button(text=translate(ButtonText.ok, lang="ua"))
+    return kb.as_markup(resize_keyboard=True, one_time_keyboard=True)

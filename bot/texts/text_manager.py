@@ -35,6 +35,7 @@ class ButtonText(Enum):
     show_events = auto()
     pay_50 = auto()
     pay_100 = auto()
+    ok = auto()
 
     def __str__(self) -> str:
         return f"buttons.{self.name}"

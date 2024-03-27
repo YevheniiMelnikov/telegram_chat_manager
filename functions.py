@@ -5,13 +5,15 @@ from typing import Type
 import aiohttp
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from dotenv import load_dotenv
 
+from bot.handlers.routers import registration_router
 from bot.keyboards.keyboards import approve_payment, event_choice
 from bot.models import Event, Person
 from bot.states import States
 from bot.texts.text_manager import MessageText, translate
+from logger import logger
 from settings import GOOGLE_CREDENTIALS_FILE
 from sheets.sheets_manager import GoogleSheetsManager
 from storage import Storage
@@ -86,6 +88,20 @@ async def resend_receipt(message: Message, state: FSMContext) -> None:
             parse_mode="HTML",
         )
     await state.update_data(message=message)
+
+    @registration_router.callback_query(lambda callback_query: callback_query.data == 'approve')
+    async def approve_callback(callback_query: CallbackQuery):
+        await callback_query.answer("Підтверджено")
+        async with aiohttp.ClientSession():
+            await bot.send_message(person.id, translate(MessageText.sign_up_approved, lang=person.language))
+        logger.info(f"{person.id} approved for event")
+
+    @registration_router.callback_query(lambda callback_query: callback_query.data == 'decline')
+    async def decline_callback(callback_query: CallbackQuery):
+        await callback_query.answer("Відхилено")
+        async with aiohttp.ClientSession():
+            await bot.send_message(person.id, translate(MessageText.sign_up_rejected, lang=person.language))
+        logger.info(f"{person.id} declined for event")
 
 
 async def wait_for_user_activity(user_id: int) -> None:
